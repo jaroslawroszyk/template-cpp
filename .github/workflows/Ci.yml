@@ -1,0 +1,45 @@
+name: Build With Tests
+
+on: [push]
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  build_job:
+    name: Build/Gtest
+    runs-on: ubuntu-latest
+    env:
+      PROJECT: gtest_submodule
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install compiler and packages
+        shell: bash
+        run: |
+          sudo apt-get install -y gcc-12 g++-12 clang-14 valgrind python3-yaml cmake lcov
+          sudo pip install codecov
+
+      - name: Create CMake build files
+        working-directory: ${{github.workspace}}
+        shell: bash
+        run: |
+          CXX_FLAGS="-Wall -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow"
+          export CMAKE_OPTIONS="${CMAKE_OPTIONS} ${ENV_CMAKE_OPTIONS}"
+          export CXX_FLAGS="${CXX_FLAGS} ${ENV_CXX_FLAGS}"
+          cmake -B build ${CMAKE_OPTIONS} -DCMAKE_CXX_FLAGS=${CXX_FLAGS}
+
+      - name: Compile the project
+        working-directory: ${{github.workspace}}
+        shell: bash
+        run: |
+          VERBOSE=1 cmake --build build --config $BUILD_TYPE -j8
+
+      - name: Run the tests
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        run: |
+          ctest

@@ -1,6 +1,10 @@
 #include <iostream>
+#include "add.hpp"
+#include <array>
 
-auto main() -> int
+int main()
 {
-    std::cout << "This is template ;) ";
+    Foo f;
+    std::cout << f.add(2,3);
+    return 0;
 }

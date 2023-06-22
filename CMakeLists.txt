@@ -1,21 +1,20 @@
-cmake_minimum_required(VERSION 3.14...3.26)
+cmake_minimum_required(VERSION 3.23.2)
+project(studentDb)
 
-set(PROJECT_NAME project1)
-project(${PROJECT_NAME})
+set(CMAKE_CXX_STANDARD 20)
+set(FLAGS -Wall -Wextra -Werror -Wpedantic)
 
-set(CMAKE_CXX_FLAGS "-g -Wall")
-set(CMAKE_CXX_STANDARD 11)
-
+set(SOURCES
+        src/add.cpp)
 set(COMMON_INCLUDES ${PROJECT_SOURCE_DIR}/include)
+
 include_directories(${COMMON_INCLUDES})
 
-file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
-
-list(REMOVE_ITEM SRC_FILES ${PROJECT_SOURCE_DIR}/src/main.cpp)
-add_library(project1_lib ${SRC_FILES})
+add_library(project1_lib ${SRC_FILES} ${SOURCES})
 add_executable(project1 ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
-target_link_libraries(project1 project1_lib)
+target_link_libraries(project1 project1_lib ${FLAGS})
+
 add_subdirectory(./googletest)
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
@@ -24,8 +23,4 @@ file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/test/*.cpp)
 
 add_executable(runUnitTests ${TEST_SRC_FILES})
 
-target_link_libraries(runUnitTests gtest gtest_main)
-
-target_link_libraries(runUnitTests project1_lib)
-
-add_test(UnitTests runUnitTests)
+target_link_libraries(runUnitTests gtest gtest_main project1_lib)

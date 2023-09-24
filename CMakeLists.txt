@@ -13,11 +13,14 @@ include_directories(${COMMON_INCLUDES})
 add_library(project1_lib ${SRC_FILES} ${SOURCES})
 add_executable(project1 ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
-target_link_libraries(project1 project1_lib ${FLAGS})
 
 add_subdirectory(./googletest)
+add_subdirectory(./boost EXCLUDE_FROM_ALL)
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+include_directories(${boost_SOURCE_DIR}/include ${boost_SOURCE_DIR})
+
+target_link_libraries(project1 project1_lib ${FLAGS}  Boost::graph)
 
 file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/test/*.cpp)
 
